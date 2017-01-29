@@ -8,8 +8,8 @@ def cross(A, B):
     """Cross product of elements in A and elements in B.
 
     Args:
-        A(string): An string indicating ideally row names.
-        B(string): An string indicating ideally column names.
+        A(string): A string indicating row names.
+        B(string): A string indicating column names.
 
     Returns:
         Cross combination between every element of A and B.
@@ -34,8 +34,8 @@ def assign_value(values, box, value):
 
     Args:
         values(dict): A Sudoku in dictionary form.
-        box(string): An string containing the box which will be updated.
-        value(string): A string containing the value that should be savec.
+        box(string): A string containing the box which will be updated.
+        value(string): A string containing the value that should be saved.
 
     Returns:
         The updated Sudoku in dictionary form.
@@ -49,21 +49,26 @@ def assign_value(values, box, value):
 def naked_twins(values):
     """Eliminates values using the naked twins strategy.
 
+    If there are two boxes in a given unit that have the same pair of values, remove these values from its peers.
+
     Args:
-        values(dict): A dictionary of the form {'box_name': '123456789', ...}
+        values(dict): A dictionary of the form {'box_name': '123456789', ...}.
 
     Returns:
         The values dictionary with the naked twins eliminated from peers.
     """
-    two_element_boxes = [box for box in boxes if len(values[box]) == 2]
-    # Find all instances of naked twins
-    elimin_candidates = [(values[box], [u for u in unit if u != box and u != peer]) for box in two_element_boxes
-                         for unit in units[box] for peer in unit
-                         if values[box] == values[peer] and box != peer]
+    # Find all boxes that have only two digits to reduce processing in the next step
+    two_digit_boxes = [box for box in boxes if len(values[box]) == 2]
+    # Find all instances of naked twins removing duplicated entries caused by the inherent symmetry of the problem
+    twin_boxes = dict((box+peer if box > peer else peer+box, (values[box], [u for u in unit if u != box and u != peer]))
+                      for box in two_digit_boxes
+                      for unit in units[box]
+                      for peer in unit
+                      if values[box] == values[peer] and box != peer)
 
-    # Eliminate possible candidates
-    [assign_value(values, box, values[box].replace(digit, '')) for digits, candidates in elimin_candidates
-     for box in candidates for digit in digits]
+    # Eliminate the twin values from the other squares
+    [assign_value(values, box, values[box].replace(digit, '')) for digits, unit in twin_boxes.values()
+     for box in unit for digit in digits]
 
     return values
 
@@ -94,7 +99,7 @@ def display(values):
     """Displays the values as a 2-D grid.
 
     Args:
-        values(dict): A Sudoku in dictionary form
+        values(dict): A Sudoku in dictionary form.
     """
     width = 1+max(len(values[s]) for s in boxes)
     line = '+'.join(['-'*(width*3)]*3)
