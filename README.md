@@ -6,9 +6,15 @@ This project aims to create an AI agent capable of solving any Sudoku puzzle as 
 
 To solve the Diagonal Sudoku I've used two different techniques: Constraint propagation and Search.
 
-### Constraint propagation
+### Constraint propagation <a id="#constraint-prop"></a>
 
 Constraints are used to dramatically reduce the search space before applying search algorithms to AI problems. For the Sudoku puzzle, when we enforce a constraint to a given box, this introduces new constraints for its peers that help us reduce the number of possibilities, i. e., the search space.
+
+To solve the naked twins problem we use three different constraints that are applied repeatedly until it is not possible to reduce the puzzle anymore:
+
+1. **Elimination** - Iterate over all the boxes in the puzzle that only have one value assigned to them and remove this value from every one of its peers;
+2. **Only choice** - Assign a digit to a given box if this box is the only one in a unit which would allow that digit;
+3. **Naked twins** - If there are two boxes in a given unit that have the same pair of values, remove these values from its peers.
 
 ### Search
 
@@ -19,16 +25,12 @@ There are different Search algorithms, and each one has its pros and cons. For t
 ## Question 1 (Naked Twins)
 ***Q: How do we use constraint propagation to solve the naked twins problem?***  
 
-To solve the naked twins problem we use three different constraints that are applied repeatedly until it is not possible to reduce the puzzle anymore:
-
-1. **Elimination** - Iterate over all the boxes in the puzzle that only have one value assigned to them and remove this value from every one of its peers;
-2. **Only choice** - Assign a digit to a given box if this box is the only one in a unit which would allow that digit;
-3. **Naked twins** - If there are two boxes in a given unit that have the same pair of values, remove these values from its peers.
+The approach used to solve the naked twins problem uses the fact that, if there are two boxes in a given unit that have the same pair of values (twin values), their peers on that given unit cannot contain any of these twin values.
 
 ## Question 2 (Diagonal Sudoku)
 ***Q: How do we use constraint propagation to solve the diagonal sudoku problem?***
   
-The only change that has to be made to solve the diagonal Sudoku problem is to take into account the two additional diagonal units -- ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8', 'I9'] and ['I1', 'H2', 'G3', 'F4', 'E5', 'D6', 'C7', 'B8', 'A9'] -- when performing the constraint propagation steps mentioned earlier.
+The only change that has to be made to solve the diagonal Sudoku problem is to take into account the two additional diagonal units -- ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8', 'I9'] and ['I1', 'H2', 'G3', 'F4', 'E5', 'D6', 'C7', 'B8', 'A9'] -- when performing the constraint propagation steps mentioned earlier in the [Constraint propagation](#constraint-prop) section.
 
 ## Animated solution
 
