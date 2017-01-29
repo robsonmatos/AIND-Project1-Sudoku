@@ -6,7 +6,7 @@ This project aims to create an AI agent capable of solving any Sudoku puzzle as 
 
 To solve the Diagonal Sudoku I've used two different techniques: Constraint propagation and Search.
 
-### Constraint propagation <a id="#constraint-prop"></a>
+### <a id="constraint-prop"></a>Constraint propagation
 
 Constraints are used to dramatically reduce the search space before applying search algorithms to AI problems. For the Sudoku puzzle, when we enforce a constraint to a given box, this introduces new constraints for its peers that help us reduce the number of possibilities, i. e., the search space.
 
