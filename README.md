@@ -6,7 +6,7 @@ This project aims to create an AI agent capable of solving any Sudoku puzzle as 
 
 To solve the Diagonal Sudoku I've used two different techniques: Constraint propagation and Search.
 
-### <a id="constraint-prop"></a>Constraint propagation
+### Constraint propagation
 
 Constraints are used to dramatically reduce the search space before applying search algorithms to AI problems. For the Sudoku puzzle, when we enforce a constraint to a given box, this introduces new constraints for its peers that help us reduce the number of possibilities, i. e., the search space.
 
@@ -30,7 +30,7 @@ The approach used to solve the naked twins problem uses the fact that, if there 
 ## Question 2 (Diagonal Sudoku)
 ***Q: How do we use constraint propagation to solve the diagonal sudoku problem?***
   
-The only change that has to be made to solve the diagonal Sudoku problem is to take into account the two additional diagonal units -- ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8', 'I9'] and ['I1', 'H2', 'G3', 'F4', 'E5', 'D6', 'C7', 'B8', 'A9'] -- when performing the constraint propagation steps mentioned earlier in the [Constraint propagation](#constraint-prop) section.
+The only change that has to be made to solve the diagonal Sudoku problem is to take into account the two additional diagonal units -- ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8', 'I9'] and ['I1', 'H2', 'G3', 'F4', 'E5', 'D6', 'C7', 'B8', 'A9'] -- when performing the constraint propagation steps mentioned earlier in the [Constraint propagation](#constraint-propagation) section.
 
 ## Animated solution
 
