@@ -1,30 +1,4 @@
-assignments = []
-
-rows = 'ABCDEFGHI'
-cols = '123456789'
-
-
-def cross(A, B):
-    """Cross product of elements in A and elements in B.
-
-    Args:
-        A(string): A string indicating row names.
-        B(string): A string indicating column names.
-
-    Returns:
-        Cross combination between every element of A and B.
-    """
-    return [a + b for a in A for b in B]
-
-
-boxes = cross(rows, cols)
-row_units = [cross(r, cols) for r in rows]
-column_units = [cross(rows, c) for c in cols]
-square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
-diag_units = [[row + col for row, col in zip(rows, cols)], [row + col for row, col in zip(rows[::-1], cols)]]
-unitlist = row_units + column_units + square_units + diag_units
-units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
-peers = dict((s, set(sum(units[s], [])) - set([s])) for s in boxes)
+from utils import *
 
 
 def assign_value(values, box, value):
@@ -46,6 +20,51 @@ def assign_value(values, box, value):
     return values
 
 
+def find_twins(values):
+    """Find all instances of naked twins.
+
+    This method at first finds all boxes that have only two digits to reduce processing, and then finds
+    all instances of naked twins removing duplicated entries if any exists.
+
+    Args:
+        values(dict): A Sudoku in dictionary form.
+
+    Returns:
+        A dictionary with all instances of naked twins
+            Entry:  A string containing the naked twins in concatenated form in ascending order.
+                    Example: say B9 and A1 are twin boxes. The resulting concatenated string should be "A1B9".
+            Values: A tuple (<twin_value>, <twins_unit>) where the first element is the twin value of the naked
+                    twins and the second is the unit where the naked twins were found without the naked twin boxes.
+    """
+    two_digit_boxes = [box for box in boxes if len(values[box]) == 2]
+    twin_boxes = dict((box+peer if box > peer else peer+box, (values[box], [u for u in unit if u != box and u != peer]))
+                      for box in two_digit_boxes
+                      for unit in units[box]
+                      for peer in unit
+                      if values[box] == values[peer] and box != peer)
+    return twin_boxes
+
+
+def eliminate_twins(values, twin_boxes):
+    """Remove all naked twins instances.
+
+    Args:
+        values(dict): A Sudoku in dictionary form.
+        twin_boxes (dict): A dictionary with all instances of naked twins
+                    Entry:  A string containing the naked twins in concatenated form in ascending order.
+                            Example: say B9 and A1 are twin boxes. The resulting concatenated string should be "A1B9".
+                    Values: A tuple (<twin_value>, <twins_unit>) where the first element is the twin value of the naked
+                            twins and the second is the unit where the naked twins were found without the naked twin
+                            boxes.
+
+    Returns:
+        The values dictionary with the naked twins eliminated from peers.
+    """
+    [assign_value(values, box, values[box].replace(digit, '')) for digits, unit in twin_boxes.values()
+     for box in unit for digit in digits]
+    return values
+
+
 def naked_twins(values):
     """Eliminates values using the naked twins strategy.
 
@@ -57,20 +76,8 @@ def naked_twins(values):
     Returns:
         The values dictionary with the naked twins eliminated from peers.
     """
-    # Find all boxes that have only two digits to reduce processing in the next step
-    two_digit_boxes = [box for box in boxes if len(values[box]) == 2]
-    # Find all instances of naked twins removing duplicated entries caused by the inherent symmetry of the problem
-    twin_boxes = dict((box+peer if box > peer else peer+box, (values[box], [u for u in unit if u != box and u != peer]))
-                      for box in two_digit_boxes
-                      for unit in units[box]
-                      for peer in unit
-                      if values[box] == values[peer] and box != peer)
-
-    # Eliminate the twin values from the other squares
-    [assign_value(values, box, values[box].replace(digit, '')) for digits, unit in twin_boxes.values()
-     for box in unit for digit in digits]
-
-    return values
+    twin_boxes = find_twins(values)
+    return eliminate_twins(values, twin_boxes)
 
 
 def grid_values(grid):
